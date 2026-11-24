@@ -257,11 +257,43 @@ body {
 }
 
 .freshness-tag {
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   color: var(--text-faint);
-  font-weight: 600;
+  font-weight: 700;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.store-fresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
   white-space: nowrap;
 }
+.store-fresh .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.store-fresh.fresh .dot { background: var(--success); box-shadow: 0 0 0 2px var(--success-bg); }
+.store-fresh.stale .dot { background: var(--warning); box-shadow: 0 0 0 2px var(--warning-bg); }
+.store-fresh.failed .dot { background: var(--danger); box-shadow: 0 0 0 2px var(--danger-bg); }
+
+.store-list {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+.small { font-size: 0.75rem; }
 
 /* ── Page Container ────────────────────────────────────────── */
 .page {
@@ -1004,6 +1036,6 @@ body {
   .page { padding: 14px 14px 36px; }
   .ecom-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
   .header-nav-wrap { padding: 0 14px; }
-  .freshness-wrap { display: none; }
+  .freshness-wrap { display: flex; gap: 6px; flex-wrap: wrap; }
   .two-col { grid-template-columns: 1fr; }
 }

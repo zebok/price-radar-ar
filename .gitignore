@@ -32,6 +32,10 @@ htmlcov/
 .mypy_cache/
 .ruff_cache/
 
+# Scripts de despliegue privado (contienen project ID personal — nunca subir a GitHub)
+scripts/run_gcp_private.sh
+scripts/*_private*
+
 # OS artifacts
 .DS_Store
 Thumbs.db

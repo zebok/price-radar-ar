@@ -223,21 +223,44 @@
 
   function renderFreshness() {
     const meta = state.catalog.meta || {};
-    const entries = Object.values(meta.stores_freshness || {});
+    const sf = meta.stores_freshness || {};
+    const entries = Object.values(sf);
     const pill = document.getElementById("freshness-pill");
+    const storeList = document.getElementById("freshness-stores");
     const banner = document.getElementById("stale-banner");
 
     if (!entries.length) {
       pill.textContent = `Actualizado ${meta.latest_dt || "-"}`;
+      storeList.innerHTML = "";
       return;
     }
 
-    const carried = entries.filter((e) => e.status === "carried_forward" || e.age_days > 0);
-    pill.textContent = `● ${meta.latest_dt || "Hoy"} · ${entries.length} cadenas`;
+    const storeInfoByKey = (key) => {
+      const info = STORE_META[key] || { label: key, color: "#6b7280", cls: "" };
+      return info;
+    };
+
+    // Pill agregada
+    const carried = entries.filter((e) => e.status === "carried_forward" || (e.age_days || 0) > 0);
+    const freshCount = entries.length - carried.length;
+    pill.textContent = `● ${meta.latest_dt || "Hoy"} · ${freshCount}/${entries.length} cadenas`;
     pill.style.color = carried.length ? "var(--warning)" : "var(--success)";
 
+    // Lista de tiendas individuales (rápido acceso)
+    storeList.innerHTML = entries.map((e) => {
+      const info = storeInfoByKey(e.store);
+      const fresh = e.freshness_status === "fresh" || (e.age_days || 0) === 0;
+      const cls = fresh ? "fresh" : e.status === "failed" ? "failed" : "stale";
+      const ageText = fresh ? "hoy" : `hace ${e.age_days || 1}d`;
+      return `
+        <span class="store-fresh ${cls}" title="${esc(info.label)}: ${e.status} · ${ageText} · ${Number(e.products_count || 0)} productos">
+          <span class="dot"></span>
+          ${esc(info.label)} <span class="small muted" style="font-size:0.7rem;font-weight:600">${ageText}</span>
+        </span>`;
+    }).join("");
+
     if (carried.length) {
-      const detail = carried.map((c) => `${storeInfo(c.store).label} (${c.last_dt})`).join(", ");
+      const detail = carried.map((c) => `${storeInfoByKey(c.store).label} (${c.last_dt})`).join(", ");
       banner.textContent = `Modo resiliencia (Carry-Forward): conservando últimos precios válidos de ${detail}.`;
       banner.classList.remove("hidden");
     } else {
