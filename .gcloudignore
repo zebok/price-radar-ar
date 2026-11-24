@@ -1,0 +1,12 @@
+.git
+.gitignore
+.venv
+__pycache__
+*.pyc
+tests/
+data/scraper-precios/
+*.parquet
+*.csv
+*.log
+.env
+.DS_Store

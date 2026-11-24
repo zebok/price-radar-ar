@@ -1,0 +1,105 @@
+name: Daily ETL & Deploy GitHub Pages
+
+on:
+  schedule:
+    # 09:00 UTC = 06:00 AM Argentina (UTC-3)
+    - cron: "0 9 * * *"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Modo de extracción ('basket', 'fmcg' o 'demo')"
+        required: false
+        default: "basket"
+        type: choice
+        options:
+          - basket
+          - fmcg
+          - demo
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages-etl"
+  cancel-in-progress: false
+
+jobs:
+  etl_and_build:
+    name: Extract, Transform, Gold & Build Static PWA
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install Python 3.12 & dependencies
+        run: |
+          uv python install 3.12
+          uv sync
+
+      - name: Restore historical Silver snapshots (Carry-Forward & Inflation)
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/scraper-precios/silver
+            data/scraper-precios/metrics
+          key: lakehouse-silver-${{ github.run_id }}
+          restore-keys: |
+            lakehouse-silver-
+
+      - name: Run resilient ETL pipeline
+        env:
+          ETL_MODE: ${{ inputs.mode || 'basket' }}
+        run: |
+          if [ "$ETL_MODE" = "demo" ]; then
+            echo "Generando bundle desde dataset demo..."
+            uv run scraper export-web --demo
+          else
+            if [ "$ETL_MODE" = "fmcg" ]; then
+              uv run scraper extract --stores all --fmcg --pages 2 --export-web || true
+            else
+              uv run scraper extract --stores all --basket extended --pages 2 --export-web || true
+            fi
+
+            # Fallback de resiliencia: si ninguna tienda respondió (ej. bloqueo IP datacenter)
+            # y no había caché previa, publicar el dataset demo para mantener la PWA operativa.
+            if [ ! -s web/data/catalog.json ]; then
+              echo "::warning::No se generaron datos en vivo ni caché previa; exportando dataset demo de respaldo."
+              uv run scraper export-web --demo
+            fi
+          fi
+
+      - name: Verify exported PWA bundle
+        run: |
+          ls -lh web/data/
+          test -s web/data/catalog.json
+          test -s web/data/analytics.json
+          test -s web/data/quality.json
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload static PWA artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+
+  deploy_pages:
+    name: Deploy PWA to GitHub Pages
+    needs: etl_and_build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

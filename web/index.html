@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChangoRadar — Comparador de Precios de Supermercados AR</title>
+  <meta name="description" content="Compará precios de 6 supermercados argentinos con formato e-commerce, optimizá tu changuito semanal y detectá ofertas caza-bobos.">
+  <meta name="theme-color" content="#0f766e">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/svg+xml" href="./icon.svg">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <!-- ═══ HEADER E-COMMERCE LIMPIO ═══ -->
+  <header class="header">
+    <div class="header-main">
+      <a href="#tienda" class="brand" id="brand-home">
+        <img src="./icon.svg" alt="ChangoRadar" class="brand-logo" width="32" height="32">
+        <span class="brand-name">ChangoRadar</span>
+      </a>
+
+      <div class="header-search">
+        <span class="search-ico" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </span>
+        <input
+          id="search-input"
+          type="search"
+          class="search-field"
+          placeholder="Buscar yerba, leche, aceite, detergente, marca o EAN..."
+          autocomplete="off"
+        >
+        <button id="clear-search-btn" class="search-clear hidden" type="button" aria-label="Limpiar búsqueda">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="header-actions">
+        <button id="open-filters-btn" class="hdr-btn" type="button" title="Filtros y preferencias personales">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="9" cy="6" r="2" fill="var(--surface)"/><circle cx="15" cy="12" r="2" fill="var(--surface)"/><circle cx="11" cy="18" r="2" fill="var(--surface)"/></svg>
+          <span class="hide-sm">Filtros</span>
+          <span id="filters-dot" class="dot hidden"></span>
+        </button>
+        <button id="header-cart-btn" class="hdr-btn hdr-btn-cart" type="button" title="Ver mi changuito">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.4 11.2a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 1.9-1.5L22 7H6"/></svg>
+          <span class="hide-sm">Changuito</span>
+          <span id="cart-badge" class="pill-count hidden">0</span>
+        </button>
+        <button id="theme-toggle" class="hdr-icon-btn" type="button" title="Tema claro / oscuro" aria-label="Cambiar tema"></button>
+      </div>
+    </div>
+
+    <div class="header-nav-wrap">
+      <nav class="main-nav" role="tablist" aria-label="Secciones">
+        <button class="nav-tab active" data-tab="compare" role="tab" aria-selected="true">Tienda</button>
+        <button class="nav-tab" data-tab="cart" role="tab" aria-selected="false">Mi Changuito</button>
+        <button class="nav-tab" data-tab="promo" role="tab" aria-selected="false">¿Es Promo?</button>
+        <button class="nav-tab" data-tab="analytics" role="tab" aria-selected="false">Analytics BI</button>
+      </nav>
+      <div class="freshness-wrap">
+        <span id="freshness-pill" class="freshness-tag">Cargando...</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <div id="stale-banner" class="alert-banner hidden"></div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         VISTA 1: TIENDA E-COMMERCE (CATÁLOGO ESPACIOSO)
+    ════════════════════════════════════════════════════════ -->
+    <section id="tab-compare" class="view active">
+      <div id="category-strip" class="cat-strip" aria-label="Categorías"></div>
+
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <span id="results-count" class="results-label">Cargando productos...</span>
+          <button id="pill-comparable" class="filter-pill" type="button">Comparables (2+ súpers)</button>
+          <button id="pill-deals" class="filter-pill" type="button">En oferta</button>
+          <button id="pill-favs" class="filter-pill" type="button">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            <span>Favoritos</span>
+            <span id="fav-count"></span>
+          </button>
+        </div>
+        <div class="toolbar-right">
+          <select id="filter-sort" class="sort-select" aria-label="Ordenar productos">
+            <option value="relevance">Ordenar: Más comparables</option>
+            <option value="price_asc">Menor precio</option>
+            <option value="unit_asc">Menor $/kg o $/L</option>
+            <option value="spread_desc">Mayor diferencia entre súpers</option>
+            <option value="discount_desc">Mayor descuento en tienda</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="compare-grid" class="ecom-grid"></div>
+
+      <div class="load-more-wrap">
+        <button id="load-more-btn" class="btn btn-outline hidden" type="button">Mostrar más productos</button>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         VISTA 2: MI CHANGUITO (OPTIMIZADOR DE LISTA)
+    ════════════════════════════════════════════════════════ -->
+    <section id="tab-cart" class="view">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Mi Changuito Semanal</h2>
+            <p class="muted">Sumá productos desde la Tienda o agregalos a mano para ver en qué supermercado gastás menos.</p>
+          </div>
+          <div class="btn-row">
+            <button id="cart-load-starter" class="btn btn-outline btn-sm" type="button">Canasta ejemplo</button>
+            <button id="cart-load-favs" class="btn btn-outline btn-sm" type="button">Traer favoritos</button>
+            <button id="cart-clear" class="btn btn-ghost btn-sm" type="button">Vaciar</button>
+          </div>
+        </div>
+
+        <form id="cart-add-form" class="inline-form">
+          <input id="cart-item-input" class="input" type="text" placeholder="Ej: yerba playadito 1kg, leche entera, aceite…" required>
+          <input id="cart-qty-input" class="input input-qty" type="number" min="1" max="50" value="1" aria-label="Cantidad">
+          <button class="btn btn-primary" type="submit">+ Agregar</button>
+        </form>
+
+        <div id="cart-items-list" class="cart-list"></div>
+      </div>
+
+      <div id="cart-summary-section" class="hidden">
+        <div class="kpi-row kpi-2">
+          <div id="cart-best-single" class="panel kpi-box accent-teal"></div>
+          <div id="cart-best-split" class="panel kpi-box accent-amber"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Total estimado por supermercado</h3>
+            <button id="cart-copy-wa" class="btn btn-primary btn-sm" type="button">Copiar para WhatsApp</button>
+          </div>
+          <div id="cart-store-bars"></div>
+        </div>
+
+        <div class="panel">
+          <h3>Detalle ítem por ítem (Compra Partida Óptima)</h3>
+          <div class="table-wrap">
+            <table class="data-table" id="cart-detail-table">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Cant.</th>
+                  <th>Mejor Súper</th>
+                  <th>Opción elegida</th>
+                  <th class="num">Subtotal</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         VISTA 3: EVALUADOR DE PROMOS & COMERCIO DE BARRIO
+    ════════════════════════════════════════════════════════ -->
+    <section id="tab-promo" class="view">
+      <div class="segmented">
+        <button class="seg-btn active" data-subtab="gondola" type="button">Promo en Góndola (Cazabobos)</button>
+        <button class="seg-btn" data-subtab="barrio" type="button">Comercio de Barrio</button>
+      </div>
+
+      <div id="subtab-gondola" class="panel">
+        <h2>Evaluador de Promociones de Góndola</h2>
+        <p class="muted">¿Un "2do al 70%" o "3x2" conviene de verdad o inflaron el precio de lista? Comparalo en segundos contra el resto de los supermercados.</p>
+
+        <form id="promo-form" class="form-grid">
+          <label class="field field-full">
+            <span>Producto</span>
+            <input id="promo-product" class="input" type="text" list="product-suggestions" placeholder="Ej: Yerba Playadito 1kg, Aceite Natura 1.5L…" required>
+            <datalist id="product-suggestions"></datalist>
+          </label>
+
+          <label class="field">
+            <span>Supermercado</span>
+            <select id="promo-store" class="input">
+              <option value="coto">Coto</option>
+              <option value="carrefour">Carrefour</option>
+              <option value="dia">Dia</option>
+              <option value="jumbo">Jumbo</option>
+              <option value="disco">Disco</option>
+              <option value="vea">Vea</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Precio de lista de 1 unidad ($)</span>
+            <input id="promo-price" class="input" type="number" step="0.01" min="1" placeholder="Ej: 5200" required>
+          </label>
+
+          <label class="field">
+            <span>Promoción</span>
+            <select id="promo-type" class="input">
+              <option value="2do_al_70">2do al 70% (35% off c/u)</option>
+              <option value="2do_al_80">2do al 80% (40% off c/u)</option>
+              <option value="2do_al_50">2do al 50% (25% off c/u)</option>
+              <option value="3x2">3x2 (33.3% off c/u)</option>
+              <option value="4x3">4x3 (25% off c/u)</option>
+              <option value="direct_pct">% de descuento directo</option>
+              <option value="none">Sin promo (precio regular)</option>
+            </select>
+          </label>
+
+          <label class="field hidden" id="promo-direct-pct-wrap">
+            <span>Descuento directo (%)</span>
+            <input id="promo-direct-pct" class="input" type="number" min="0" max="90" value="20">
+          </label>
+
+          <label class="field">
+            <span>Reintegro banco / billetera (%)</span>
+            <input id="promo-bank-pct" class="input" type="number" min="0" max="60" value="0">
+          </label>
+
+          <div class="field field-full">
+            <button class="btn btn-primary btn-lg" type="submit">Evaluar oferta vs mercado</button>
+          </div>
+        </form>
+
+        <div id="promo-result" class="result-card hidden"></div>
+      </div>
+
+      <div id="subtab-barrio" class="panel hidden">
+        <h2>Comercio de Barrio vs Supermercados</h2>
+        <p class="muted">Compará lo que pagaste en la verdulería, carnicería o almacén contra los precios vigentes en las 6 cadenas.</p>
+
+        <form id="barrio-form" class="form-grid">
+          <label class="field field-full">
+            <span>Producto comprado</span>
+            <input id="barrio-product" class="input" type="text" list="product-suggestions" placeholder="Ej: leche, yerba, aceite, queso…" required>
+          </label>
+          <label class="field">
+            <span>Cantidad</span>
+            <input id="barrio-qty" class="input" type="number" step="0.1" min="0.1" value="1" required>
+          </label>
+          <label class="field">
+            <span>Unidad</span>
+            <select id="barrio-unit" class="input">
+              <option value="u">Unidades</option>
+              <option value="kg">Kilogramos (kg)</option>
+              <option value="L">Litros (L)</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Total pagado ($)</span>
+            <input id="barrio-paid" class="input" type="number" step="1" min="1" placeholder="Ej: 4500" required>
+          </label>
+          <div class="field field-full">
+            <button class="btn btn-primary btn-lg" type="submit">Comparar contra supermercados</button>
+          </div>
+        </form>
+
+        <div id="barrio-result" class="result-card hidden"></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         VISTA 4: ANALYTICS BI & DATA QUALITY
+    ════════════════════════════════════════════════════════ -->
+    <section id="tab-analytics" class="view">
+      <div id="bi-kpi-grid" class="kpi-row kpi-4"></div>
+
+      <div class="two-col">
+        <div class="panel">
+          <h3>Competitividad por Supermercado</h3>
+          <p class="muted small">Porcentaje de veces más barato en EANs compartidos (Win-Rate) e Índice de Precios vs mediana del mercado (100 = promedio).</p>
+          <div id="chart-competitiveness" class="chart-box"></div>
+          <div class="table-wrap">
+            <table class="data-table" id="table-competitiveness">
+              <thead>
+                <tr>
+                  <th>Cadena</th>
+                  <th class="num">Catálogo</th>
+                  <th class="num">Win-Rate</th>
+                  <th class="num">Índice Mediana</th>
+                  <th class="num">Ofertas ≥15%</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Evolución de Canasta (IPC Propio)</h3>
+          <p class="muted small">Costo diario de la canasta de referencia por supermercado frente a la compra partida óptima (línea punteada).</p>
+          <div id="chart-inflation" class="chart-box"></div>
+          <div id="inflation-legend" class="legend-row"></div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="panel">
+          <h3>Mayores Subas del Período</h3>
+          <div id="bi-top-increases"></div>
+        </div>
+        <div class="panel">
+          <h3>Mayores Bajas / Oportunidades</h3>
+          <div id="bi-top-drops"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Auditoría Automática de Promos "Caza-bobos" (DuckDB SQL)</h3>
+        <p class="muted small">Productos publicados con descuento (≥10% off) cuyo precio promocional sigue siendo más caro que el precio regular en otra cadena para el mismo EAN.</p>
+        <div class="table-wrap">
+          <table class="data-table" id="table-cazabobos">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Promo en</th>
+                <th class="num">Precio Promo</th>
+                <th>Más barato en</th>
+                <th class="num">Precio Rival</th>
+                <th class="num">Sobreprecio</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Oportunidades de Stockeo (No Perecederos ≥15% off)</h3>
+        <div id="bi-stockup-grid" class="stockup-grid"></div>
+      </div>
+
+      <div class="panel">
+        <h3>Observabilidad ETL &amp; Data Quality</h3>
+        <p class="muted small">Embudo Medallion (Bronze → Silver → Gold), cobertura de enlaces/fotos y frescura por API (*Carry-Forward*).</p>
+        <div id="quality-funnel" class="funnel-grid"></div>
+        <div class="table-wrap">
+          <table class="data-table" id="table-quality-stores">
+            <thead>
+              <tr>
+                <th>Supermercado</th>
+                <th>Estado ETL</th>
+                <th>Frescura</th>
+                <th class="num">Último Snapshot</th>
+                <th class="num">Productos</th>
+                <th class="num">Éxito HTTP</th>
+                <th class="num">Latencia</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ═══ DRAWER LATERAL DE FILTROS Y PREFERENCIAS PERSONALES ═══ -->
+  <div id="drawer-backdrop" class="drawer-backdrop hidden"></div>
+  <aside id="filters-drawer" class="drawer hidden" aria-label="Filtros y preferencias">
+      <div class="drawer-head">
+      <h3>Filtros y Preferencias</h3>
+      <button id="close-filters-btn" class="hdr-icon-btn" type="button" aria-label="Cerrar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="drawer-body">
+      <div class="drawer-section">
+        <label class="field">
+          <span>Filtrar por supermercado</span>
+          <select id="filter-store" class="input">
+            <option value="all">Todos los supermercados</option>
+            <option value="carrefour">Carrefour</option>
+            <option value="coto">Coto</option>
+            <option value="dia">Dia</option>
+            <option value="jumbo">Jumbo</option>
+            <option value="disco">Disco</option>
+            <option value="vea">Vea</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="drawer-section">
+        <h4>Mis Exclusiones Personales (Opcional)</h4>
+        <p class="muted small">Ocultá rubros o palabras que vos no comprás. <strong>Solo se guarda en tu navegador</strong> y no oculta productos al resto de los usuarios.</p>
+        <div id="exclusion-presets" class="preset-list"></div>
+        <form id="excl-custom-form" class="inline-form" style="margin-top:10px">
+          <input id="excl-custom-input" class="input" type="text" placeholder="Ej: gaseosa, chocolate…">
+          <button class="btn btn-outline btn-sm" type="submit">Ocultar</button>
+        </form>
+        <div id="excl-active-tags" class="preset-list" style="margin-top:8px"></div>
+        <button id="excl-reset-btn" class="btn btn-ghost btn-sm" type="button" style="margin-top:10px">Limpiar todas las exclusiones</button>
+      </div>
+
+      <div class="drawer-section">
+        <h4>Compartir Favoritos en Familia</h4>
+        <p class="muted small">Exportá o importá tu lista de favoritos en formato JSON sin necesidad de cuentas ni contraseñas.</p>
+        <div class="btn-row">
+          <button id="fav-export-btn" class="btn btn-outline btn-sm" type="button">Exportar JSON</button>
+          <label class="btn btn-outline btn-sm file-btn">
+            Importar JSON
+            <input id="fav-import-input" type="file" accept="application/json" hidden>
+          </label>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <footer class="footer">
+    <span>ChangoRadar · ETL Medallion (Polars + Parquet + DuckDB) · Precios públicos de referencia de supermercados argentinos.</span>
+  </footer>
+
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>

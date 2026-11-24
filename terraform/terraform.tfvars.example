@@ -1,0 +1,8 @@
+# Copiá este archivo a terraform.tfvars y completá con los datos de tu proyecto GCP
+project_id      = "my-gcp-project-id"
+region          = "us-central1"
+bucket_name     = "my-gcp-project-id-supermarket-lakehouse"
+image_name      = "us-central1-docker.pkg.dev/my-gcp-project-id/scraper-precios/scraper-precios:latest"
+cron_schedule   = "0 6 * * *"
+cron_timezone   = "America/Argentina/Buenos_Aires"
+pages_per_query = 2

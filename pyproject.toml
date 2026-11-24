@@ -1,0 +1,52 @@
+[project]
+name = "scraper-precios"
+version = "2.0.0"
+description = "ETL Medallion Lakehouse, analítica SQL con DuckDB y comparador web/PWA de precios de supermercados argentinos (VTEX + Constructor.io)"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.12"
+dependencies = [
+    "httpx[http2]>=0.27.0",
+    "polars>=1.0.0",
+    "duckdb>=1.1.0",
+    "pydantic>=2.7.0",
+    "pydantic-settings>=2.2.0",
+    "loguru>=0.7.2",
+    "rich>=13.7.0",
+    "tenacity>=8.2.0",
+    "fastapi>=0.110.0",
+    "uvicorn>=0.28.0",
+]
+
+[project.optional-dependencies]
+gcp = [
+    "google-cloud-storage>=2.14.0",
+]
+
+[project.scripts]
+scraper = "scraper_precios.cli:main"
+scraper-server = "scraper_precios.server:run_server"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.0",
+    "pytest-asyncio>=0.24.0",
+    "ruff>=0.7.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 110
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501", "B008"]

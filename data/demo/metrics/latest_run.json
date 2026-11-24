@@ -1,0 +1,166 @@
+{
+  "run_timestamp_utc": "2026-11-24T14:25:39.531139+00:00",
+  "dt": "2026-11-24",
+  "mode": "demo_live_verified",
+  "funnel": {
+    "candidates_seen": 1280,
+    "extractor_rejections": {
+      "out_of_stock": 598
+    },
+    "bronze_rows": 682,
+    "silver_cleaning_drops": {
+      "out_of_stock": 0,
+      "price_out_of_bounds": 0,
+      "invalid_name": 0,
+      "non_retail": 0,
+      "duplicates": 20
+    },
+    "silver_rows_today": 662,
+    "active_silver_rows": 662,
+    "unique_valid_eans": 120,
+    "gold_cross_store_eans": 120
+  },
+  "quality_kpis": {
+    "ean_coverage_pct": 100.0,
+    "url_coverage_pct": 100.0,
+    "image_coverage_pct": 100.0,
+    "cross_store_match_rate_pct": 100.0,
+    "stores_total": 6,
+    "stores_healthy": 6,
+    "carried_forward_stores": []
+  },
+  "stores": [
+    {
+      "store_key": "carrefour",
+      "store_name": "Carrefour",
+      "status": "ok",
+      "requests_total": 22,
+      "requests_success": 22,
+      "requests_failed": 0,
+      "success_rate_pct": 100.0,
+      "avg_latency_ms": 430.3,
+      "duration_seconds": 14.77,
+      "records_extracted": 198,
+      "throughput_records_sec": 13.4,
+      "circuit_open": false,
+      "rejection_counts": {
+        "out_of_stock": 107
+      },
+      "error_message": null,
+      "freshness_status": "fresh",
+      "last_dt": "2026-11-24",
+      "age_days": 0,
+      "active_products": 99
+    },
+    {
+      "store_key": "jumbo",
+      "store_name": "Jumbo",
+      "status": "ok",
+      "requests_total": 22,
+      "requests_success": 22,
+      "requests_failed": 0,
+      "success_rate_pct": 100.0,
+      "avg_latency_ms": 369.4,
+      "duration_seconds": 26.63,
+      "records_extracted": 260,
+      "throughput_records_sec": 9.8,
+      "circuit_open": false,
+      "rejection_counts": {
+        "out_of_stock": 98
+      },
+      "error_message": null,
+      "freshness_status": "fresh",
+      "last_dt": "2026-11-24",
+      "age_days": 0,
+      "active_products": 117
+    },
+    {
+      "store_key": "disco",
+      "store_name": "Disco",
+      "status": "ok",
+      "requests_total": 22,
+      "requests_success": 22,
+      "requests_failed": 0,
+      "success_rate_pct": 100.0,
+      "avg_latency_ms": 334.6,
+      "duration_seconds": 24.69,
+      "records_extracted": 221,
+      "throughput_records_sec": 9.0,
+      "circuit_open": false,
+      "rejection_counts": {
+        "out_of_stock": 129
+      },
+      "error_message": null,
+      "freshness_status": "fresh",
+      "last_dt": "2026-11-24",
+      "age_days": 0,
+      "active_products": 115
+    },
+    {
+      "store_key": "vea",
+      "store_name": "Vea",
+      "status": "ok",
+      "requests_total": 22,
+      "requests_success": 22,
+      "requests_failed": 0,
+      "success_rate_pct": 100.0,
+      "avg_latency_ms": 365.9,
+      "duration_seconds": 26.67,
+      "records_extracted": 244,
+      "throughput_records_sec": 9.1,
+      "circuit_open": false,
+      "rejection_counts": {
+        "out_of_stock": 114
+      },
+      "error_message": null,
+      "freshness_status": "fresh",
+      "last_dt": "2026-11-24",
+      "age_days": 0,
+      "active_products": 114
+    },
+    {
+      "store_key": "dia",
+      "store_name": "Dia",
+      "status": "ok",
+      "requests_total": 22,
+      "requests_success": 22,
+      "requests_failed": 0,
+      "success_rate_pct": 100.0,
+      "avg_latency_ms": 396.5,
+      "duration_seconds": 14.01,
+      "records_extracted": 219,
+      "throughput_records_sec": 15.6,
+      "circuit_open": false,
+      "rejection_counts": {
+        "out_of_stock": 1
+      },
+      "error_message": null,
+      "freshness_status": "fresh",
+      "last_dt": "2026-11-24",
+      "age_days": 0,
+      "active_products": 101
+    },
+    {
+      "store_key": "coto",
+      "store_name": "Coto",
+      "status": "ok",
+      "requests_total": 22,
+      "requests_success": 22,
+      "requests_failed": 0,
+      "success_rate_pct": 100.0,
+      "avg_latency_ms": 247.8,
+      "duration_seconds": 10.74,
+      "records_extracted": 339,
+      "throughput_records_sec": 31.6,
+      "circuit_open": false,
+      "rejection_counts": {
+        "out_of_stock": 149
+      },
+      "error_message": null,
+      "freshness_status": "fresh",
+      "last_dt": "2026-11-24",
+      "age_days": 0,
+      "active_products": 116
+    }
+  ]
+}

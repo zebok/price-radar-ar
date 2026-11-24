@@ -1,0 +1,18 @@
+{
+  "name": "ChangoRadar — Comparador de Precios AR",
+  "short_name": "ChangoRadar",
+  "description": "Compará precios de 6 supermercados argentinos, optimizá tu changuito y detectá falsas ofertas caza-bobos.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0f766e",
+  "lang": "es-AR",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

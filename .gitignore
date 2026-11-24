@@ -1,0 +1,37 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Environment variables & secrets
+.env
+*.pem
+*.key
+*credentials*.json
+terraform/*.tfvars
+terraform/.terraform/
+terraform/*.tfstate*
+
+# Lakehouse local generado en runtime (se mantiene trackeado data/demo/)
+data/scraper-precios/
+data/favorites.json
+*.log
+
+# Bundle JSON generado en tiempo de build/deploy (se regenera con `scraper export-web`)
+web/data/*.json
+
+# Tooling & test caches
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# OS artifacts
+.DS_Store
+Thumbs.db

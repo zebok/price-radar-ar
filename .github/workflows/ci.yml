@@ -1,0 +1,59 @@
+name: CI — Lint, Tests, SQL & IaC
+
+on:
+  push:
+    branches: ["main", "master"]
+  pull_request:
+    branches: ["main", "master"]
+
+jobs:
+  quality:
+    name: Python 3.12 · Ruff · Pytest · DuckDB
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python 3.12
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync --dev
+
+      - name: Lint with Ruff
+        run: uv run ruff check src tests scripts
+
+      - name: Run unit & integration tests
+        run: uv run pytest -v
+
+      - name: Smoke test DuckDB SQL analytics on demo lakehouse
+        run: uv run scraper report --demo --limit 5
+
+      - name: Smoke test static PWA bundle export
+        run: |
+          uv run scraper export-web --demo
+          test -s web/data/catalog.json
+          test -s web/data/analytics.json
+          test -s web/data/quality.json
+
+  terraform:
+    name: Terraform Format Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Check Terraform formatting
+        run: terraform fmt -check -recursive terraform/

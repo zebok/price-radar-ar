@@ -1,0 +1,15 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.venv
+.git
+.gitignore
+.pytest_cache
+tests/
+data/scraper-precios/
+*.parquet
+*.csv
+*.log
+.env
+.DS_Store
