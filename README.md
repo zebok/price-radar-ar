@@ -1,10 +1,11 @@
-# 🛒 ChangoRadar — ETL Medallion, Analítica SQL (DuckDB) y Comparador de Precios AR
+# 🛒 Price Radar AR — ETL Medallion, Analítica SQL (DuckDB) y Comparador de Precios AR
 
 [![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Polars](https://img.shields.io/badge/ETL-Polars%20%2B%20Parquet-0f766e)](https://pola.rs/)
 [![DuckDB](https://img.shields.io/badge/Analytics-DuckDB%20SQL-FFF000?logo=duckdb&logoColor=black)](https://duckdb.org/)
 [![FastAPI](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Terraform](https://img.shields.io/badge/IaC-Terraform%20GCP-7B42BC?logo=terraform&logoColor=white)](./terraform/)
+[![GitHub Pages](https://img.shields.io/badge/Web%20App-Pages-2088FF?logo=github&logoColor=white)](https://zebok.github.io/price-radar-ar/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 
 Pipeline **ETL Medallion Lakehouse**, capa analítica **SQL con DuckDB sobre Parquet**, tablero de **Observabilidad / Data Quality** y **Web App / PWA liviana** para comparar precios en **6 cadenas de supermercados de Argentina** (**Carrefour, Coto, Dia, Jumbo, Disco y Vea**).
@@ -77,6 +78,8 @@ uv run scraper serve --demo
 ```
 
 Abrí `http://localhost:8001` en tu navegador (o `http://localhost:8001/docs` para Swagger OpenAPI).
+
+**Web App en vivo (GitHub Pages, PWA instalable, offline):** https://zebok.github.io/price-radar-ar/
 
 ---
 
